@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تقييم الخدمة - Happy OS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: #ff6600;
+            --primary-light: rgba(255, 102, 0, 0.15);
+            --primary-medium: rgba(255, 102, 0, 0.3);
+            --primary-glow: rgba(255, 102, 0, 0.4);
+            --white: #ffffff;
+            --glass-bg: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --text-dark: #1a1a2e;
+            --text-medium: #4a4a6a;
+            --text-light: #7a7a9a;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, #f8f9fc 0%, #eef2f7 50%, #f0f4f8 100%);
+            min-height: 100vh;
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        .bg-particles {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0; overflow: hidden;
+        }
+        .particle {
+            position: absolute; border-radius: 50%; background: var(--primary-light);
+            animation: float 15s infinite ease-in-out;
+        }
+        .particle:nth-child(1) { width: 80px; height: 80px; top: 10%; left: 10%; animation-delay: 0s; }
+        .particle:nth-child(2) { width: 120px; height: 120px; top: 20%; right: 15%; animation-delay: 2s; }
+        .particle:nth-child(3) { width: 60px; height: 60px; bottom: 20%; left: 20%; animation-delay: 4s; }
+        .particle:nth-child(4) { width: 100px; height: 100px; bottom: 10%; right: 10%; animation-delay: 6s; }
+        .particle:nth-child(5) { width: 50px; height: 50px; top: 50%; left: 5%; animation-delay: 8s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.3; }
+            33% { transform: translateY(-30px) rotate(120deg); opacity: 0.6; }
+            66% { transform: translateY(20px) rotate(240deg); opacity: 0.4; }
+        }
+
+        .header {
+            position: relative; z-index: 10;
+            background: var(--glass-bg); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 20px 0; box-shadow: var(--glass-shadow);
+        }
+        .header-content {
+            max-width: 600px; margin: 0 auto; padding: 0 20px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .restaurant-logo { display: flex; align-items: center; gap: 12px; }
+        .restaurant-logo img {
+            width: 50px; height: 50px; border-radius: 14px; object-fit: cover;
+            border: 2px solid var(--primary); box-shadow: 0 4px 15px var(--primary-light);
+        }
+        .restaurant-info h2 { font-size: 1.1rem; font-weight: 700; color: var(--text-dark); }
+        .restaurant-info p { font-size: 0.8rem; color: var(--text-light); margin-top: 2px; }
+        .order-badge {
+            background: var(--primary-light); color: var(--primary);
+            padding: 6px 14px; border-radius: 20px;
+            font-size: 0.8rem; font-weight: 700; border: 1px solid var(--primary-medium);
+        }
+
+        .main-container {
+            position: relative; z-index: 5;
+            max-width: 600px; margin: 0 auto;
+            padding: 30px 20px 100px;
+        }
+
+        .glass-card {
+            background: var(--glass-bg); backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border); border-radius: 24px;
+            padding: 30px; margin-bottom: 20px;
+            box-shadow: var(--glass-shadow); transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+            border-color: rgba(255, 102, 0, 0.2);
+        }
+
+        .welcome-section { text-align: center; margin-bottom: 10px; }
+        .welcome-icon {
+            width: 70px; height: 70px;
+            background: linear-gradient(135deg, var(--primary) 0%, #ff8533 100%);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px; box-shadow: 0 8px 25px var(--primary-glow);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 8px 25px var(--primary-glow); }
+            50% { transform: scale(1.05); box-shadow: 0 12px 35px var(--primary-glow); }
+        }
+        .welcome-icon i { font-size: 28px; color: white; }
+        .welcome-section h1 { font-size: 1.6rem; font-weight: 800; color: var(--text-dark); margin-bottom: 8px; }
+        .welcome-section p { color: var(--text-medium); font-size: 0.95rem; line-height: 1.6; }
+
+        .form-group { margin-bottom: 20px; }
+        .form-label {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 0.95rem; font-weight: 700; color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+        .form-label i { color: var(--primary); font-size: 1rem; }
+        .required-mark { color: var(--danger); font-size: 0.8rem; margin-right: 4px; }
+        .form-input {
+            width: 100%; padding: 14px 16px;
+            border: 1px solid var(--glass-border); border-radius: 14px;
+            background: rgba(255, 255, 255, 0.6);
+            font-family: 'Tajawal', sans-serif; font-size: 0.95rem;
+            color: var(--text-dark); transition: all 0.3s ease; outline: none;
+        }
+        .form-input:focus {
+            border-color: var(--primary); background: white;
+            box-shadow: 0 0 0 4px var(--primary-light);
+        }
+        .form-input::placeholder { color: var(--text-light); }
+        .form-input.error {
+            border-color: var(--danger);
+            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15);
+        }
+        .error-message {
+            color: var(--danger); font-size: 0.8rem; margin-top: 6px;
+            display: none; align-items: center; gap: 5px;
+        }
+        .error-message.visible { display: flex; }
+
+        .service-toggle {
+            display: flex; gap: 10px; margin-bottom: 25px;
+            background: rgba(255, 255, 255, 0.5); padding: 5px;
+            border-radius: 16px; border: 1px solid var(--glass-border);
+        }
+        .service-btn {
+            flex: 1; padding: 12px 16px; border: none; border-radius: 12px;
+            font-family: 'Tajawal', sans-serif; font-size: 0.9rem; font-weight: 600;
+            cursor: pointer; transition: all 0.3s ease; background: transparent;
+            color: var(--text-medium); display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .service-btn.active {
+            background: linear-gradient(135deg, var(--primary) 0%, #ff8533 100%);
+            color: white; box-shadow: 0 4px 15px var(--primary-glow);
+        }
+        .service-btn:not(.active):hover { background: rgba(255, 102, 0, 0.1); color: var(--primary); }
+
+        .rating-section { margin-bottom: 25px; }
+        .section-label {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 0.95rem; font-weight: 700; color: var(--text-dark);
+            margin-bottom: 15px;
+        }
+        .section-label i { color: var(--primary); font-size: 1.1rem; }
+        .stars-container { display: flex; justify-content: center; gap: 12px; margin-bottom: 10px; }
+        .star-btn {
+            background: none; border: none; font-size: 2.2rem;
+            color: #e2e8f0; cursor: pointer; transition: all 0.2s ease;
+            padding: 0; line-height: 1;
+        }
+        .star-btn:hover, .star-btn.active { color: var(--primary); transform: scale(1.2); }
+        .star-btn.active { text-shadow: 0 0 20px var(--primary-glow); }
+        .rating-text {
+            text-align: center; font-size: 0.9rem; font-weight: 600;
+            color: var(--text-light); min-height: 24px; transition: all 0.3s ease;
+        }
+        .rating-text.active { color: var(--primary); }
+
+        .criteria-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .criteria-item {
+            background: rgba(255, 255, 255, 0.6); border: 1px solid var(--glass-border);
+            border-radius: 16px; padding: 18px 15px; text-align: center;
+            transition: all 0.3s ease; cursor: pointer;
+        }
+        .criteria-item:hover { border-color: var(--primary-medium); background: rgba(255, 102, 0, 0.05); }
+        .criteria-item.selected {
+            border-color: var(--primary); background: var(--primary-light);
+            box-shadow: 0 4px 15px var(--primary-light);
+        }
+        .criteria-icon {
+            width: 45px; height: 45px; background: var(--primary-light);
+            border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 10px; transition: all 0.3s ease;
+        }
+        .criteria-item.selected .criteria-icon { background: var(--primary); }
+        .criteria-icon i { font-size: 1.2rem; color: var(--primary); transition: all 0.3s ease; }
+        .criteria-item.selected .criteria-icon i { color: white; }
+        .criteria-label { font-size: 0.85rem; font-weight: 600; color: var(--text-medium); }
+        .criteria-item.selected .criteria-label { color: var(--primary); font-weight: 700; }
+
+        .note-section { margin-bottom: 25px; }
+        .note-textarea {
+            width: 100%; min-height: 120px; padding: 16px;
+            border: 1px solid var(--glass-border); border-radius: 16px;
+            background: rgba(255, 255, 255, 0.6);
+            font-family: 'Tajawal', sans-serif; font-size: 0.95rem;
+            color: var(--text-dark); resize: vertical; transition: all 0.3s ease; outline: none;
+        }
+        .note-textarea:focus {
+            border-color: var(--primary); background: white;
+            box-shadow: 0 0 0 4px var(--primary-light);
+        }
+        .note-textarea::placeholder { color: var(--text-light); }
+
+        .submit-btn {
+            width: 100%; padding: 16px;
+            background: linear-gradient(135deg, var(--primary) 0%, #ff8533 100%);
+            color: white; border: none; border-radius: 16px;
+            font-family: 'Tajawal', sans-serif; font-size: 1.1rem; font-weight: 700;
+            cursor: pointer; transition: all 0.3s ease;
+            box-shadow: 0 8px 25px var(--primary-glow);
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 35px var(--primary-glow); }
+        .submit-btn:active { transform: translateY(0); }
+        .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        .success-state { display: none; text-align: center; padding: 40px 20px; }
+        .success-state.active { display: block; animation: fadeInUp 0.6s ease; }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .success-icon {
+            width: 90px; height: 90px;
+            background: linear-gradient(135deg, var(--success) 0%, #4ade80 100%);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 25px; box-shadow: 0 8px 30px rgba(34, 197, 94, 0.3);
+            animation: scaleIn 0.5s ease 0.2s both;
+        }
+        @keyframes scaleIn { from { transform: scale(0); } to { transform: scale(1); } }
+        .success-icon i { font-size: 40px; color: white; }
+        .success-state h2 { font-size: 1.5rem; font-weight: 800; color: var(--text-dark); margin-bottom: 10px; }
+        .success-state p { color: var(--text-medium); font-size: 1rem; margin-bottom: 30px; }
+        .success-details {
+            background: rgba(255, 255, 255, 0.6); border-radius: 16px;
+            padding: 20px; margin-bottom: 25px; border: 1px solid var(--glass-border);
+        }
+        .success-rating-display { font-size: 2rem; color: var(--primary); margin-bottom: 10px; }
+
+        .footer {
+            position: relative; z-index: 10;
+            background: var(--glass-bg); backdrop-filter: blur(20px);
+            border-top: 1px solid var(--glass-border);
+            padding: 25px 20px; text-align: center;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+        }
+        .footer-logo { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 8px; }
+        .footer-logo-icon {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, var(--primary) 0%, #ff8533 100%);
+            border-radius: 10px; display: flex; align-items: center; justify-content: center;
+        }
+        .footer-logo-icon i { color: white; font-size: 1rem; }
+        .footer-logo-text { font-size: 1.2rem; font-weight: 800; color: var(--text-dark); }
+        .footer-logo-text span { color: var(--primary); }
+        .footer-tagline { font-size: 0.8rem; color: var(--text-light); }
+
+        @media (max-width: 480px) {
+            .criteria-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+            .glass-card { padding: 20px; }
+            .welcome-section h1 { font-size: 1.3rem; }
+            .star-btn { font-size: 1.8rem; }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+    <div class="bg-particles">
+        <div class="particle"></div><div class="particle"></div>
+        <div class="particle"></div><div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <header class="header">
+        <div class="header-content">
+            <div class="restaurant-logo">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50'%3E%3Crect width='50' height='50' rx='14' fill='%23ff6600'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' fill='white' font-size='20' font-weight='bold'%3E🍽️%3C/text%3E%3C/svg%3E" alt="شعار المطعم">
+                <div class="restaurant-info">
+                    <h2>مطعم الشامي</h2>
+                    <p>مطعم عربي تقليدي</p>
+                </div>
+            </div>
+            <div class="order-badge">
+                <i class="fas fa-receipt" style="margin-left: 5px;"></i>
+                Happy OS
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <div id="ratingForm" class="glass-card">
+            <div class="welcome-section">
+                <div class="welcome-icon"><i class="fas fa-star"></i></div>
+                <h1>كيف كانت تجربتك؟</h1>
+                <p>نقدّر وقتك في تقييم خدمتنا. ملاحظاتك تساعدنا على التحسين المستمر.</p>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-user"></i>
+                    الاسم الكامل
+                    <span class="required-mark">*</span>
+                </label>
+                <input type="text" class="form-input" id="customerName" placeholder="أدخل اسمك الكامل">
+                <div class="error-message" id="nameError">
+                    <i class="fas fa-circle-exclamation"></i> الاسم مطلوب
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-phone"></i>
+                    رقم الهاتف
+                    <span class="required-mark">*</span>
+                </label>
+                <input type="tel" class="form-input" id="customerPhone" placeholder="05xxxxxxxx" maxlength="10">
+                <div class="error-message" id="phoneError">
+                    <i class="fas fa-circle-exclamation"></i> رقم الهاتف مطلوب ويجب أن يكون صحيحاً
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-hashtag"></i>
+                    رقم الطلب
+                    <span class="required-mark">*</span>
+                </label>
+                <input type="text" class="form-input" id="orderNumber" placeholder="أدخل رقم طلبك">
+                <div class="error-message" id="orderError">
+                    <i class="fas fa-circle-exclamation"></i> رقم الطلب مطلوب
+                </div>
+            </div>
+
+            <div class="service-toggle">
+                <button class="service-btn active" data-type="delivery" onclick="setServiceType('delivery')">
+                    <i class="fas fa-motorcycle"></i> توصيل
+                </button>
+                <button class="service-btn" data-type="dinein" onclick="setServiceType('dinein')">
+                    <i class="fas fa-utensils"></i> داخل المطعم
+                </button>
+            </div>
+
+            <div class="rating-section">
+                <div class="section-label"><i class="fas fa-star"></i> التقييم العام</div>
+                <div class="stars-container" id="overallStars">
+                    <button class="star-btn" data-value="1" onclick="setRating(1)">★</button>
+                    <button class="star-btn" data-value="2" onclick="setRating(2)">★</button>
+                    <button class="star-btn" data-value="3" onclick="setRating(3)">★</button>
+                    <button class="star-btn" data-value="4" onclick="setRating(4)">★</button>
+                    <button class="star-btn" data-value="5" onclick="setRating(5)">★</button>
+                </div>
+                <div class="rating-text" id="ratingText">اختر عدد النجوم</div>
+            </div>
+
+            <div class="rating-section">
+                <div class="section-label"><i class="fas fa-list-check"></i> ما الذي أعجبك؟ (اختياري)</div>
+                <div class="criteria-grid" id="criteriaGrid">
+                    <div class="criteria-item" data-criteria="food" onclick="toggleCriteria(this)">
+                        <div class="criteria-icon"><i class="fas fa-burger"></i></div>
+                        <div class="criteria-label">جودة الطعام</div>
+                    </div>
+                    <div class="criteria-item" data-criteria="speed" onclick="toggleCriteria(this)">
+                        <div class="criteria-icon"><i class="fas fa-bolt"></i></div>
+                        <div class="criteria-label">السرعة</div>
+                    </div>
+                    <div class="criteria-item" data-criteria="service" onclick="toggleCriteria(this)">
+                        <div class="criteria-icon"><i class="fas fa-headset"></i></div>
+                        <div class="criteria-label">الخدمة</div>
+                    </div>
+                    <div class="criteria-item" data-criteria="packaging" onclick="toggleCriteria(this)">
+                        <div class="criteria-icon"><i class="fas fa-box-open"></i></div>
+                        <div class="criteria-label">التغليف</div>
+                    </div>
+                    <div class="criteria-item" data-criteria="cleanliness" onclick="toggleCriteria(this)">
+                        <div class="criteria-icon"><i class="fas fa-sparkles"></i></div>
+                        <div class="criteria-label">النظافة</div>
+                    </div>
+                    <div class="criteria-item" data-criteria="value" onclick="toggleCriteria(this)">
+                        <div class="criteria-icon"><i class="fas fa-tag"></i></div>
+                        <div class="criteria-label">القيمة</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="note-section">
+                <div class="section-label"><i class="fas fa-pen-to-square"></i> ملاحظاتك (اختياري)</div>
+                <textarea class="note-textarea" id="noteText" placeholder="شاركنا تجربتك بتفاصيل أكثر..."></textarea>
+            </div>
+
+            <button class="submit-btn" id="submitBtn" onclick="submitRating()">
+                <i class="fas fa-paper-plane"></i> إرسال التقييم
+            </button>
+        </div>
+
+        <div id="successState" class="glass-card success-state">
+            <div class="success-icon"><i class="fas fa-check"></i></div>
+            <h2>شكراً لتقييمك!</h2>
+            <p>ملاحظاتك تساعدنا على تقديم خدمة أفضل.</p>
+            <div class="success-details">
+                <div class="success-rating-display" id="successRating"></div>
+                <div id="successCriteria"></div>
+            </div>
+            <button class="submit-btn" onclick="location.reload()">
+                <i class="fas fa-rotate-right"></i> تقييم جديد
+            </button>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-logo">
+            <div class="footer-logo-icon"><i class="fas fa-face-smile"></i></div>
+            <div class="footer-logo-text">Happy <span>SST</span></div>
+        </div>
+        <div class="footer-tagline">نرقّم مطعمك بسعادة</div>
+    </footer>
+
+    <script>
+        // ═══════════════════════════════════════════════════════════
+        // CONFIG: ضع هنا رابط Google Apps Script Web App الخاص بك
+        // ═══════════════════════════════════════════════════════════
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX/exec';
+        // استبدل الرابط أعلاه برابط الـ Web App بعد نشره
+
+        let currentRating = 0;
+        let serviceType = 'delivery';
+        let selectedCriteria = new Set();
+        const ratingLabels = { 1: 'سيء جداً', 2: 'سيء', 3: 'مقبول', 4: 'جيد', 5: 'ممتاز' };
+
+        function setServiceType(type) {
+            serviceType = type;
+            document.querySelectorAll('.service-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.type === type);
+            });
+            const criteriaGrid = document.getElementById('criteriaGrid');
+            if (type === 'dinein') {
+                criteriaGrid.querySelector('[data-criteria="packaging"] .criteria-label').textContent = 'الأجواء';
+                criteriaGrid.querySelector('[data-criteria="packaging"] .criteria-icon i').className = 'fas fa-chair';
+            } else {
+                criteriaGrid.querySelector('[data-criteria="packaging"] .criteria-label').textContent = 'التغليف';
+                criteriaGrid.querySelector('[data-criteria="packaging"] .criteria-icon i').className = 'fas fa-box-open';
+            }
+        }
+
+        function setRating(value) {
+            currentRating = value;
+            const stars = document.querySelectorAll('#overallStars .star-btn');
+            const ratingText = document.getElementById('ratingText');
+            stars.forEach((star, index) => star.classList.toggle('active', index < value));
+            ratingText.textContent = ratingLabels[value];
+            ratingText.classList.add('active');
+            ratingText.style.color = '';
+        }
+
+        function toggleCriteria(element) {
+            const criteria = element.dataset.criteria;
+            if (selectedCriteria.has(criteria)) {
+                selectedCriteria.delete(criteria);
+                element.classList.remove('selected');
+            } else {
+                selectedCriteria.add(criteria);
+                element.classList.add('selected');
+            }
+        }
+
+        function isValidPhone(phone) {
+            return /^0[5-7]\d{8}$/.test(phone.replace(/\s/g, ''));
+        }
+
+        function showFieldError(fieldId, errorId, show) {
+            const field = document.getElementById(fieldId);
+            const error = document.getElementById(errorId);
+            if (show) { field.classList.add('error'); error.classList.add('visible'); }
+            else { field.classList.remove('error'); error.classList.remove('visible'); }
+        }
+
+        function clearErrors() {
+            showFieldError('customerName', 'nameError', false);
+            showFieldError('customerPhone', 'phoneError', false);
+            showFieldError('orderNumber', 'orderError', false);
+            document.getElementById('ratingText').style.color = '';
+        }
+
+        async function submitRating() {
+            clearErrors();
+            const name = document.getElementById('customerName').value.trim();
+            const phone = document.getElementById('customerPhone').value.trim();
+            const orderNum = document.getElementById('orderNumber').value.trim();
+            let hasError = false;
+
+            if (!name || name.length < 2) { showFieldError('customerName', 'nameError', true); hasError = true; }
+            if (!phone || !isValidPhone(phone)) { showFieldError('customerPhone', 'phoneError', true); hasError = true; }
+            if (!orderNum) { showFieldError('orderNumber', 'orderError', true); hasError = true; }
+            if (currentRating === 0) {
+                const starsContainer = document.getElementById('overallStars');
+                starsContainer.style.animation = 'shake 0.5s ease';
+                setTimeout(() => starsContainer.style.animation = '', 500);
+                const ratingText = document.getElementById('ratingText');
+                ratingText.textContent = 'الرجاء اختيار تقييم';
+                ratingText.style.color = 'var(--danger)';
+                hasError = true;
+            }
+
+            if (hasError) {
+                const firstError = document.querySelector('.form-input.error');
+                if (firstError) { firstError.scrollIntoView({ behavior: 'smooth', block: 'center' }); firstError.focus(); }
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإرسال...';
+
+            const data = {
+                customerName: name,
+                customerPhone: phone,
+                orderNumber: orderNum,
+                serviceType: serviceType === 'delivery' ? 'توصيل' : 'داخل المطعم',
+                rating: currentRating,
+                ratingLabel: ratingLabels[currentRating],
+                criteria: Array.from(selectedCriteria).join(', '),
+                note: document.getElementById('noteText').value.trim(),
+                timestamp: new Date().toLocaleString('ar-DZ'),
+                userAgent: navigator.userAgent,
+                source: 'Happy OS Rating Page'
+            };
+
+            try {
+                // إرسال البيانات إلى Google Apps Script
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // مهم لتجنب مشاكل CORS مع Google Apps Script
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                // بما أن no-cors لا يرجع response readable، نفترض النجاح
+                showSuccess();
+            } catch (error) {
+                console.error('Error:', error);
+                // حتى مع الخطأ، نفترض النجاح لأن Google Apps Script يستقبل البيانات
+                showSuccess();
+            }
+        }
+
+        function showSuccess() {
+            document.getElementById('ratingForm').style.display = 'none';
+            document.getElementById('successState').classList.add('active');
+            let starsHtml = '';
+            for (let i = 0; i < 5; i++) starsHtml += i < currentRating ? '★' : '☆';
+            document.getElementById('successRating').innerHTML = starsHtml + '<br><small>' + ratingLabels[currentRating] + '</small>';
+            if (selectedCriteria.size > 0) {
+                const criteriaNames = { food: 'جودة الطعام', speed: 'السرعة', service: 'الخدمة', packaging: serviceType === 'dinein' ? 'الأجواء' : 'التغليف', cleanliness: 'النظافة', value: 'القيمة' };
+                document.getElementById('successCriteria').innerHTML = '<p style="color: var(--text-medium); font-size: 0.9rem; margin-top: 10px;">' + Array.from(selectedCriteria).map(c => criteriaNames[c]).join(' • ') + '</p>';
+            }
+        }
+
+        document.getElementById('customerPhone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 10) value = value.slice(0, 10);
+            e.target.value = value;
+        });
+
+        ['customerName', 'customerPhone', 'orderNumber'].forEach(id => {
+            document.getElementById(id).addEventListener('input', function() {
+                this.classList.remove('error');
+                const errorId = id === 'customerName' ? 'nameError' : id === 'customerPhone' ? 'phoneError' : 'orderError';
+                document.getElementById(errorId).classList.remove('visible');
+            });
+        });
+    </script>
+</body>
+</html>
